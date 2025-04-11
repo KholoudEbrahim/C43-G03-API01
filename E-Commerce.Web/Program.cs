@@ -1,14 +1,23 @@
 
+using Microsoft.EntityFrameworkCore;
+using Persistence.Data;
+
 namespace E_Commerce.Web
 {
     public class Program
     {
         public static void Main(string[] args)
+        
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
 
+            // Add services to the container.
+            builder.Services.AddDbContext<StoreDbContext>(options =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+            });
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -25,7 +34,7 @@ namespace E_Commerce.Web
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
 
             app.MapControllers();
@@ -34,3 +43,7 @@ namespace E_Commerce.Web
         }
     }
 }
+//GetAllProduct     => Product
+// GetById          => Product
+// GetBrands        => Brands
+//GetTypes          => Types
