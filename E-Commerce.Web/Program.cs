@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Data;
+using ServicesAbstractions;
 
 namespace E_Commerce.Web
 {
@@ -15,6 +16,10 @@ namespace E_Commerce.Web
 
 
             // Add services to the container.
+            builder.Services.AddControllers();
+
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
             builder.Services.AddDbContext<StoreDbContext>(options =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -23,8 +28,11 @@ namespace E_Commerce.Web
 
 
             builder.Services.AddScoped<IDbInitializer, DbInitializer>();
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddScoped<IServiceManager, IServiceManager>();
+            builder.Services.AddScoped<IUnitOfWork, IUnitOfWork>();
+            builder.Services.AddAutoMapper(typeof (Services.AssemblyReference).Assembly);
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
