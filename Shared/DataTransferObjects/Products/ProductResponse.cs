@@ -13,8 +13,8 @@ namespace Shared.DataTransferObjects.Products
         public string Description { get; init; }
         public string PictureUrl { get; init; } 
         public decimal Price { get; init; }
-        public string ProductBrand { get; init; }
-        public string ProductType { get; init; }
+        public string BrandName { get; init; }
+        public string TypeName { get; init; }
 
 
 

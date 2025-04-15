@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Services
 {
-    internal class ProductService(IUnitOfWork unitOfWork , IMapper mapper) 
+    public class ProductService(IUnitOfWork unitOfWork , IMapper mapper) 
         : IProductService
     {
         public async Task<IEnumerable<ProductResponse>> GetAllProductsAsync()
@@ -20,14 +20,14 @@ namespace Services
             var product = await unitOfWork.GetRepository<Product, int>().GetAsync(id);
             return mapper.Map<Product ,ProductResponse>(product);
         }
-   
 
-        //public async Task<IEnumerable<BrandResponse>> GetBrandAsync()
-        //{
-        //    var repo = unitOfWork.GetRepository<ProductBrand, int>();
-        //    var brands = await repo.GetAllAsync();
-        //    return mapper.Map<IEnumerable<ProductBrand>, IEnumerable<BrandResponse>>(brands);
-        //}
+
+        public async Task<IEnumerable<BrandResponse>> GetBrandsAsync()
+        {
+            var repo = unitOfWork.GetRepository<ProductBrand, int>();
+            var brands = await repo.GetAllAsync();
+            return mapper.Map<IEnumerable<ProductBrand>, IEnumerable<BrandResponse>>(brands);
+        }
 
         public async Task<IEnumerable<TypeResponse>> GetTypesAsync()
         {
@@ -37,11 +37,6 @@ namespace Services
             return mapper.Map<IEnumerable<ProductType>, IEnumerable<TypeResponse>>(types);
         }
 
-        public async Task<IEnumerable<BrandResponse>> GetBrandAsync()
-        {
-            var repo = unitOfWork.GetRepository<ProductBrand, int>();
-            var brands = await repo.GetAllAsync();
-            return mapper.Map<IEnumerable<ProductBrand>, IEnumerable<BrandResponse>>(brands);
-        }
+     
     }
 }

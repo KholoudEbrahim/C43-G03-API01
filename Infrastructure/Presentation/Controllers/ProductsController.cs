@@ -10,16 +10,13 @@ using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class ProductsController(IServiceManager serviceManager) : ControllerBase
     {
-        //Get All Products => IEnumerable<ProductResponse>
-        //Get Product
-        // Get All Brands
-        // Get All Types
-
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<ProductResponse>>>> GetAllProducts() // Get BaseUrl/Products
+        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetAllProducts() // Get BaseUrl/Products
         {
             var products = await serviceManager.ProductService.GetAllProductsAsync();
 
@@ -29,23 +26,35 @@ namespace Presentation.Controllers
 
 
 
-        [HttpGet(template: "{id}")]
+        [HttpGet( "{id}")]
 
         public async Task<ActionResult<ProductResponse>> GetProduct(int id) // Get BaseUrl/Products/{id}
 
         {
 
             var product = await serviceManager.ProductService.GetProductAsync(id);
-            return Ok(value: product);
+            return Ok( product);
 
         }
 
-        [HttpGet(template: "brands")]
+        [HttpGet( "brands")]
 
-        public async Task<ActionResult<BrandResponse>> GetBrands() // Get BaseUrl/api/Products/brands {
+        public async Task<ActionResult<BrandResponse>> GetBrands() // Get BaseUrl/api/Products/brands 
         {
             var brands = await serviceManager.ProductService.GetBrandsAsync();
-            return Ok(value: brands);
+            return Ok( brands);
+        }
+
+        [HttpGet("types")]
+
+        public async Task<ActionResult<TypeResponse>> GetTypes() // Get BaseUrl/api/Products/types 
+        {
+            var types = await serviceManager.ProductService.GetTypesAsync();
+            return Ok(types);
         }
     }
 }
+        //Get All Products => IEnumerable<ProductResponse>
+        //Get Product
+        // Get All Brands
+        // Get All Types
