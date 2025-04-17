@@ -65,17 +65,13 @@ namespace Persistence
                     // Read From the file
 
                     var data = await File.ReadAllTextAsync(@"..Infrastructure\Persistence\Data\Seeding\products.json");
+                    var objects = JsonSerializer.Deserialize<List<Product>>(data);
 
-                    // Convert to C# objects [Deserialize]
-                    var objects = JsonSerializer.Deserialize<List<ProductBrand>>(data);
-                    // Save to DB
                     if (objects is not null && objects.Any())
                     {
-                        context.Set<ProductBrand>().AddRange(objects);
+                        context.Set<Product>().AddRange(objects);
                         await context.SaveChangesAsync();
                     }
-
-
 
                 }
             }
