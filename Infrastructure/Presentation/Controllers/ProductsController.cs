@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using ServicesAbstractions;
+using Shared.DataTransferObjects;
 using Shared.DataTransferObjects.Products;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,11 @@ namespace Presentation.Controllers
     {
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<ProductResponse>>> GetAllProducts() // Get BaseUrl/Products
+        public async Task<ActionResult<PaginatedResponse<ProductResponse>>>
+            GetAllProducts([FromQuery] ProductQueryParameters queryParameters) // Get BaseUrl/Products
         {
-            var products = await serviceManager.ProductService.GetAllProductsAsync();
+            throw new Exception("Test");
+            var products = await serviceManager.ProductService.GetAllProductsAsync(queryParameters);
 
             return Ok(value: products);
 

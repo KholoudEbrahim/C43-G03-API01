@@ -16,31 +16,34 @@ namespace Services.Specifications
             // Add Includes
             AddInclude(include: p => p.ProductBrand);
             AddInclude(include: p => p.ProductType);
+
         }
 
         // Use this CTOR to Create Query to Get All Products
-        public ProductWithBrandAndTypeSpecifications()
-            : base(criteria: null)
+        public ProductWithBrandAndTypeSpecifications(ProductQueryParameters parameters, bool includeCriteria = true)
+            : base(criteria: includeCriteria ? CreateCriteria(parameters) : null)
         {
             // Add Includes
             AddInclude(include: p => p.ProductBrand);
             AddInclude(include: p => p.ProductType);
+            ApplySorting(parameters.options);
+            ApplyPagination(parameters.PageSize, parameters.PageIndex);
+
+
+            // Apply Sorting if needed
+            //if (includeCriteria)
+            //{
+            //    ApplySorting(parameters.options);
+            //}
         }
 
-        public ProductWithBrandAndTypeSpecifications(int? brandId, int? typeId, ProductSortingOptions options)
-            : base(criteria: CreateCriteria(brandId, typeId))
-        {
-            // Add Includes
-            AddInclude(include: p => p.ProductBrand);
-            AddInclude(include: p => p.ProductType);
-            ApplySorting(options);
-        }
-
-        private static System.Linq.Expressions.Expression<Func<Product, bool>> CreateCriteria(int? brandId, int? typeId)
+        private static System.Linq.Expressions.Expression<Func<Product, bool>> CreateCriteria(ProductQueryParameters parameters)
         {
             return product =>
-                (!brandId.HasValue || product.BrandId == brandId.Value) &&
-                (!typeId.HasValue || product.TypeId == typeId.Value);
+                (!parameters.BrandId.HasValue || product.BrandId == parameters.BrandId.Value) &&
+                (!parameters.TypeId.HasValue || product.TypeId == parameters.TypeId.Value) &&
+                (string.IsNullOrWhiteSpace(parameters.Search)  ||
+                product.Name.ToLower().Contains(parameters.Search.ToLower()));
         }
 
         private void ApplySorting(ProductSortingOptions options)
@@ -54,7 +57,7 @@ namespace Services.Specifications
                     AddOrderByDescending(orderByDescending: p => p.Name);
                     break;
                 case ProductSortingOptions.PriceAsc:
-                    AddOrderBy( p => p.Price);
+                    AddOrderBy(p => p.Price);
                     break;
                 case ProductSortingOptions.PriceDesc:
                     AddOrderByDescending(orderByDescending: p => p.Price);

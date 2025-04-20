@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Domain.Contracts;
+using Domain.Exceptions;
+using Services.Specifications;
+using Shared.DataTransferObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,15 +13,25 @@ namespace Services
     public class ProductService(IUnitOfWork unitOfWork , IMapper mapper) 
         : IProductService
     {
-        public async Task<IEnumerable<ProductResponse>> GetAllProductsAsync()
+        public async Task<PaginatedResponse<ProductResponse>> GetAllProductsAsync(ProductQueryParameters
+            queryParameters)
         {
-           var product = await unitOfWork.GetRepository<Product, int>().GetAllAsync();
-            return mapper.Map<IEnumerable<Product>, IEnumerable<ProductResponse>>(product);
-        }
+            var specifications = new ProductWithBrandAndTypeSpecifications(queryParameters);
+                
+           var product = await unitOfWork.GetRepository<Product, int>().GetAllAsync(specifications);
+            var data = mapper.Map<IEnumerable<Product>, IEnumerable<ProductResponse>>(product);
+            var pageCount = data.Count();
 
+
+            var totalCount = await unitOfWork.GetRepository<Product,int >()
+                .CountAsync(new ProductCountSpecifications(queryParameters));
+            return new(queryParameters.PageIndex, pageCount,totalCount ,data);
+        }
         public async Task<ProductResponse> GetProductAsync(int id)
         {
-            var product = await unitOfWork.GetRepository<Product, int>().GetAsync(id);
+            var specifications = new ProductWithBrandAndTypeSpecifications(id);
+            var product = await unitOfWork.GetRepository<Product, int>().GetAsync(specifications) ??
+                throw new ProductNotFoundException(id);
             return mapper.Map<Product ,ProductResponse>(product);
         }
 

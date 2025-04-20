@@ -19,20 +19,29 @@ namespace Services.Specifications
         public List<Expression<Func<T, object>>> IncludeExpressions { get; } = [];
 
 
+
         protected void AddInclude(Expression<Func<T, object>> include)
             => IncludeExpressions.Add(item: include);
+       public Expression<Func<T, object>> OrderBy { get; private set; }
+        public Expression<Func<T, object>> OrderByDescending { get; private set; }
+        protected void AddOrderBy(Expression<Func<T, object>> orderBy)
+      => OrderBy = orderBy;
 
-        public List<Func<T, object>> OrderBy { get; } = new List<Func<T, object>>();
-        public List<Func<T, object>> OrderByDescending { get; } = new List<Func<T, object>>();
+        protected void AddOrderByDescending(Expression<Func<T, object>> orderByDescending)
+            => OrderByDescending = orderByDescending;
 
-        public void AddOrderBy(Func<T, object> orderBy)
+
+        public int Skip { get; private set; }
+
+        public int Take { get; private set; }
+
+        public bool IsPaginated { get; private set; } 
+
+        protected void ApplyPagination(int pageSize , int pageIndex)
         {
-            OrderBy.Add(orderBy);
-        }
-
-        public void AddOrderByDescending(Func<T, object> orderByDescending)
-        {
-            OrderByDescending.Add(orderByDescending);
+            IsPaginated = true;
+            Take = pageSize;
+            Skip = (pageIndex- 1) * pageIndex;
         }
     }
 }
