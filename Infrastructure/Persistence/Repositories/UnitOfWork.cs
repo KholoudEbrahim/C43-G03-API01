@@ -12,7 +12,7 @@ namespace Persistence.Repositories
         private readonly Dictionary<string, object> _repostitories = [];
 
         public async Task<int> SaveChangesAsync() => await context.SaveChangesAsync();
-        public IGenericRepository<IEntity, TKey> GenericRepository<IEntity, TKey>() 
+        public IGenericRepository<IEntity, TKey> GetRepository<IEntity, TKey>() 
             where IEntity : BaseEntity<TKey>
         {
             var typeName = typeof(IEntity).Name;
