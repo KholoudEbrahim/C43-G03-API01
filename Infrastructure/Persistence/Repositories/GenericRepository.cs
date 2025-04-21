@@ -16,11 +16,25 @@ namespace Persistence.Repositories
 
         public void Update(TEntity entity) => context.Set<TEntity>().Update(entity);
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
-            => await context.Set<TEntity>().ToListAsync();
+        public async Task<IEnumerable<TEntity>> GetAllAsync(bool trackChanges = false)
+        {
+            var query = context.Set<TEntity>().AsQueryable();
 
-        public async Task<TEntity> GetAsync(Tkey key) 
-            => await context.Set<TEntity>().FindAsync(key);
+            if (!trackChanges)
+            {
+                query = query.AsNoTracking();
+            }
 
+            return await query.ToListAsync();
+        }
+        public async Task<TEntity> GetAsync(Tkey id) 
+            => await context.Set<TEntity>().FindAsync(id);
+
+        public async Task<TEntity> GetAsync(ISpecifications<TEntity> specifications) =>
+            await SpecificationsEvaluator.CreateQuery(context.Set<TEntity>(), specifications).FirstOrDefaultAsync();
+
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity> specifications) =>
+             await SpecificationsEvaluator.CreateQuery(context.Set<TEntity>(), specifications).ToListAsync();
     }
 }

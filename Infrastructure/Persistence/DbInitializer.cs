@@ -3,88 +3,79 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using System.Threading.Tasks;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using Persistence.Data;
 
 namespace Persistence
 {
-    public class DbInitializer (StoreDbContext context) : IDbInitializer
+    public class DbInitializer(StoreDbContext context) : IDbInitializer
     {
         public async Task InitializerAsync()
         {
             try
             {
-                /// Production => Create Db + Seeding
+                Console.WriteLine("Starting DB Initialization...");
 
-                /// Dev => Seeding
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var seedingPath = Path.Combine(basePath, "Data", "Seeding");
 
-                //if ((await context.Database.GetPendingMigrationsAsync()).Any())
-
-                //await context.Database.MigrateAsync();
-
+                // Seed Product Brands
                 if (!context.Set<ProductBrand>().Any())
-
                 {
+                    Console.WriteLine("Seeding Product Brands...");
+                    var filePath = Path.Combine(seedingPath, "brands.json");
 
-                    // Read From the file
-
-                    var data = await File.ReadAllTextAsync(@"..Infrastructure\Persistence\Data\Seeding\brands.json");
-
-                    // Convert to C# objects [Deserialize]
+                    var data = await File.ReadAllTextAsync(filePath);
                     var objects = JsonSerializer.Deserialize<List<ProductBrand>>(data);
-                    // Save to DB
+
                     if (objects is not null && objects.Any())
                     {
                         context.Set<ProductBrand>().AddRange(objects);
                         await context.SaveChangesAsync();
+                        Console.WriteLine("Brands seeded.");
                     }
                 }
 
+                // Seed Product Types
                 if (!context.Set<ProductType>().Any())
-
                 {
-                    // Read From the file
-                    var data = await File.ReadAllTextAsync(@"..Infrastructure\Persistence\Data\Seeding\types.json");
-                    // Convert to C# objects [Deserialize]
+                    Console.WriteLine("Seeding Product Types...");
+                    var filePath = Path.Combine(seedingPath, "types.json");
+
+                    var data = await File.ReadAllTextAsync(filePath);
                     var objects = JsonSerializer.Deserialize<List<ProductType>>(data);
-                    // Save to DB
+
                     if (objects is not null && objects.Any())
                     {
                         context.Set<ProductType>().AddRange(objects);
                         await context.SaveChangesAsync();
+                        Console.WriteLine("Types seeded.");
                     }
-
-
-
                 }
 
+                // Seed Products
                 if (!context.Set<Product>().Any())
-
                 {
+                    Console.WriteLine("Seeding Products...");
+                    var filePath = Path.Combine(seedingPath, "products.json");
 
-                    // Read From the file
+                    var data = await File.ReadAllTextAsync(filePath);
+                    var objects = JsonSerializer.Deserialize<List<Product>>(data);
 
-                    var data = await File.ReadAllTextAsync(@"..Infrastructure\Persistence\Data\Seeding\products.json");
-
-                    // Convert to C# objects [Deserialize]
-                    var objects = JsonSerializer.Deserialize<List<ProductBrand>>(data);
-                    // Save to DB
                     if (objects is not null && objects.Any())
                     {
-                        context.Set<ProductBrand>().AddRange(objects);
+                        context.Set<Product>().AddRange(objects);
                         await context.SaveChangesAsync();
+                        Console.WriteLine("Products seeded.");
                     }
-
-
-
                 }
             }
-
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine($"Error during DB seeding: {ex.Message}");
             }
         }
     }
-}
-//..Infrastructure\Persistence\Data\Seeding\brands.json
+}//..Infrastructure\Persistence\Data\Seeding\brands.json

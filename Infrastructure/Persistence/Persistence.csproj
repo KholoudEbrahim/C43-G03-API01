@@ -14,4 +14,19 @@
     <ProjectReference Include="..\..\Core\Services\Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\Seeding\brands.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Seeding\delivery.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Seeding\products.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Data\Seeding\types.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
